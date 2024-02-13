@@ -7,6 +7,11 @@ import express, {
   RequestHandler,
 } from "express";
 
+//import fs from "fs";
+//import { appendFile } from "node:fs";
+var fs = require("fs");
+//const path = require("path");
+
 const app: Express = express();
 const port = 3000;
 
@@ -20,10 +25,46 @@ app.use(express.json());
 
 app.post("/*", (req, res) => {
   req.body; // JavaScript object containing the parse JSON
-  //res.json(req.body);
 
+  //Get string data
   var peopleJSON = JSON.stringify(req.body);
-  res.send(peopleJSON);
+
+  //Make tmp file
+  fs.appendFileSync(
+    __dirname + "/Dafny-Files" + "/dafny.dfy",
+    peopleJSON,
+    function (err: any) {
+      if (err) throw err;
+      console.log("Create!");
+    }
+  );
+
+  //Run Dafny and store output on file
+
+
+  //test
+  const data = fs.readFileSync(__dirname + "/Dafny-Files" + "/dafny.dfy",{ encoding: 'utf8', flag: 'r' });
+ 
+  // Display the file data
+  //console.log(data);
+
+  //Delete file
+  fs.unlink(__dirname + "/Dafny-Files" + "/dafny.dfy", function(err:any) {
+    if(err && err.code == 'ENOENT') {
+        // file doens't exist
+        console.info("File doesn't exist, won't remove it.");
+    } else if (err) {
+        // other errors, e.g. maybe we don't have enough permission
+        console.error("Error occurred while trying to remove file");
+    } else {
+        console.info(`removed`);
+    }
+  });
+  
+
+  //Return Dafny Output
+  //res.send(peopleJSON);
+  res.send(data);
 });
 
 app.get("/", (req, res) => {
