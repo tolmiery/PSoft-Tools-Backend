@@ -1,15 +1,10 @@
 // src/index.js
-import express, {
-  Express,
-  Request,
-  Response,
-  NextFunction,
-  RequestHandler,
-} from "express";
+import express, { Express, RequestHandler } from "express";
 
 //import fs from "fs";
 //import { appendFile } from "node:fs";
 var fs = require("fs");
+var cors = require("cors");
 //const path = require("path");
 
 const app: Express = express();
@@ -20,8 +15,14 @@ const logRequest: RequestHandler = (req, res, next) => {
   next();
 };
 
+var corsOptions = {
+  origin: "http://localhost:5173",
+  optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
+};
+
 app.use(logRequest);
 app.use(express.json());
+app.use(cors(corsOptions));
 
 app.post("/*", (req, res) => {
   req.body; // JavaScript object containing the parse JSON
@@ -41,26 +42,27 @@ app.post("/*", (req, res) => {
 
   //Run Dafny and store output on file
 
-
   //test
-  const data = fs.readFileSync(__dirname + "/Dafny-Files" + "/dafny.dfy",{ encoding: 'utf8', flag: 'r' });
- 
+  const data = fs.readFileSync(__dirname + "/Dafny-Files" + "/dafny.dfy", {
+    encoding: "utf8",
+    flag: "r",
+  });
+
   // Display the file data
   //console.log(data);
 
   //Delete file
-  fs.unlink(__dirname + "/Dafny-Files" + "/dafny.dfy", function(err:any) {
-    if(err && err.code == 'ENOENT') {
-        // file doens't exist
-        console.info("File doesn't exist, won't remove it.");
+  fs.unlink(__dirname + "/Dafny-Files" + "/dafny.dfy", function (err: any) {
+    if (err && err.code == "ENOENT") {
+      // file doens't exist
+      console.info("File doesn't exist, won't remove it.");
     } else if (err) {
-        // other errors, e.g. maybe we don't have enough permission
-        console.error("Error occurred while trying to remove file");
+      // other errors, e.g. maybe we don't have enough permission
+      console.error("Error occurred while trying to remove file");
     } else {
-        console.info(`removed`);
+      console.info(`removed`);
     }
   });
-  
 
   //Return Dafny Output
   //res.send(peopleJSON);
