@@ -1,6 +1,6 @@
 // src/index.js
 import express, { Express, RequestHandler } from "express";
-
+import runDafny from 'dafnyRun.ts'
 //import fs from "fs";
 //import { appendFile } from "node:fs";
 var fs = require("fs");
@@ -48,6 +48,8 @@ app.post("/*", (req, res) => {
     flag: "r",
   });
 
+  runDafny(data);
+
   // Display the file data
   //console.log(data);
 
@@ -66,7 +68,7 @@ app.post("/*", (req, res) => {
 
   //Return Dafny Output
   //res.send(peopleJSON);
-  res.send(data);
+  res.sendFile("dafnyOutput.txt"); // find proper path for file and pass that as the argument
 });
 
 app.get("/", (req, res) => {
