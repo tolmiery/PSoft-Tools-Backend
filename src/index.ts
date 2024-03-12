@@ -71,7 +71,7 @@ app.post("/*", (req, res) => {
 
 app.get("/", (req, res) => {
   //res.send("Hello World!");
-  let responseText = "Hello World!<br>";
+  let responseText = JSON.stringify("Hello World!<br>");
   res.send(responseText);
 });
 
