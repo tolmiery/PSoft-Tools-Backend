@@ -25,6 +25,10 @@ app.use(express.json());
 app.use(cors(corsOptions));
 
 app.post("/*", (req, res) => {
+  /* We get the dafny code that was written in our code editor, verify it with dafny
+   * by calling runDafny, then send whatever dafny outputs (stored in dafnyOutput.txt)
+   * back to the front end to be displayed to the user.
+   */
   req.body; // JavaScript object containing the parse JSON
 
   //Get string data
@@ -40,7 +44,7 @@ app.post("/*", (req, res) => {
     }
   );
 
-  //Run Dafny and store output on file
+  //Run Dafny and store output on file 
 
   //test
   const data = fs.readFileSync(__dirname + "/Dafny-Files" + "/dafny.dfy", {
