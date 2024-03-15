@@ -5,6 +5,7 @@ import express, { Express, RequestHandler } from "express";
 //import { appendFile } from "node:fs";
 var fs = require("fs");
 var cors = require("cors");
+var bodyParser = require("body-parser");
 //const path = require("path");
 
 const app: Express = express();
@@ -23,17 +24,19 @@ var corsOptions = {
 app.use(logRequest);
 app.use(express.json());
 app.use(cors(corsOptions));
+app.use(bodyParser.raw({inflate:true, type: 'text/plain'}));
+//app.use(bodyParser.json());
 
 app.post("/*", (req, res) => {
-  req.body; // JavaScript object containing the parse JSON
-
+  //req.body; // JavaScript object containing the parse JSON
+  //console.log((req.body).toString())
   //Get string data
-  var peopleJSON = JSON.stringify(req.body);
+  var peopleTxt = (req.body).toString();
 
   //Make tmp file
   fs.appendFileSync(
     __dirname + "/Dafny-Files" + "/dafny.dfy",
-    peopleJSON,
+    peopleTxt,
     function (err: any) {
       if (err) throw err;
       console.log("Create!");
@@ -66,6 +69,7 @@ app.post("/*", (req, res) => {
 
   //Return Dafny Output
   //res.send(peopleJSON);
+  console.log(data.toString());
   res.send(data);
 });
 
