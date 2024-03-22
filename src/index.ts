@@ -1,10 +1,11 @@
 // src/index.js
 import express, { Express, RequestHandler } from "express";
-import runDafny from 'dafnyRun.ts'
+import runDafny from "dafnyRun.ts";
 //import fs from "fs";
 //import { appendFile } from "node:fs";
 var fs = require("fs");
 var cors = require("cors");
+var bodyParser = require("body-parser");
 //const path = require("path");
 
 const app: Express = express();
@@ -23,6 +24,8 @@ var corsOptions = {
 app.use(logRequest);
 app.use(express.json());
 app.use(cors(corsOptions));
+app.use(bodyParser.raw({ inflate: true, type: "text/plain" }));
+//app.use(bodyParser.json());
 
 app.post("/*", (req, res) => {
   /* We get the dafny code that was written in our code editor, verify it with dafny
@@ -31,20 +34,22 @@ app.post("/*", (req, res) => {
    */
   req.body; // JavaScript object containing the parse JSON
 
+  //req.body; // JavaScript object containing the parse JSON
+  //console.log((req.body).toString())
   //Get string data
-  var peopleJSON = JSON.stringify(req.body);
+  var peopleTxt = req.body.toString();
 
   //Make tmp file
   fs.appendFileSync(
     __dirname + "/Dafny-Files" + "/dafny.dfy",
-    peopleJSON,
+    peopleTxt,
     function (err: any) {
       if (err) throw err;
       console.log("Create!");
     }
   );
 
-  //Run Dafny and store output on file 
+  //Run Dafny and store output on file
 
   //test
   const data = fs.readFileSync(__dirname + "/Dafny-Files" + "/dafny.dfy", {
@@ -72,12 +77,13 @@ app.post("/*", (req, res) => {
 
   //Return Dafny Output
   //res.send(peopleJSON);
+  console.log(data.toString());
   res.sendFile("dafnyOutput.txt"); // find proper path for file and pass that as the argument
 });
 
 app.get("/", (req, res) => {
   //res.send("Hello World!");
-  let responseText = "Hello World!<br>";
+  let responseText = JSON.stringify("Hello World!<br>");
   res.send(responseText);
 });
 
