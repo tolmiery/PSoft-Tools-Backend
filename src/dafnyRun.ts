@@ -8,6 +8,9 @@ import * as fs from 'fs';
 function runDafny(dafnyCodeFile : string){
     const {spawn} = require("child_process");
     var content: string = "";
+    // check if dafny is installed
+    const dafnyCheck = spawn("./dafny.sh");
+
     const child = spawn("/dafny/dafny", ["verify", dafnyCodeFile], 'utf-8');
 
     // concatenating all output from the shell to content
