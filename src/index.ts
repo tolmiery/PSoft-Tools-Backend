@@ -1,6 +1,6 @@
 // src/index.js
 import express, { Express, RequestHandler } from "express";
-import runDafny from "dafnyRun.ts";
+import runDafny from "./dafnyRun";
 //import fs from "fs";
 //import { appendFile } from "node:fs";
 var fs = require("fs");
@@ -37,7 +37,8 @@ app.post("/*", (req, res) => {
   //req.body; // JavaScript object containing the parse JSON
   //console.log((req.body).toString())
   //Get string data
-  var peopleTxt = req.body.toString();
+  var peopleTxt: String = req.body.toString();
+  peopleTxt = peopleTxt.slice(1, peopleTxt.length - 1);
 
   //Make tmp file
   fs.appendFileSync(
@@ -52,17 +53,21 @@ app.post("/*", (req, res) => {
   //Run Dafny and store output on file
 
   //test
-  const data = fs.readFileSync(__dirname + "/Dafny-Files" + "/dafny.dfy", {
-    encoding: "utf8",
-    flag: "r",
-  });
+  // const data = fs.readFileSync(__dirname + "/Dafny-Files" + "/dafny.dfy", {
+  //   encoding: "utf8",
+  //   flag: "r",
+  // });
 
-  runDafny(data);
-
+  const runDaf = async () => {
+    const data = await runDafny(__dirname + "/Dafny-Files" + "/dafny.dfy");
+    return data;
+  };
+  const data = runDaf();
+  console.log(data, "this");
   // Display the file data
   //console.log(data);
 
-  //Delete file
+  // Delete file
   fs.unlink(__dirname + "/Dafny-Files" + "/dafny.dfy", function (err: any) {
     if (err && err.code == "ENOENT") {
       // file doens't exist
@@ -78,7 +83,7 @@ app.post("/*", (req, res) => {
   //Return Dafny Output
   //res.send(peopleJSON);
   console.log(data.toString());
-  res.sendFile("dafnyOutput.txt"); // find proper path for file and pass that as the argument
+  res.send(data); // find proper path for file and pass that as the argument
 });
 
 app.get("/", (req, res) => {
