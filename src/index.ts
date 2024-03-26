@@ -1,9 +1,10 @@
 // src/index.js
 import express, { Express, RequestHandler } from "express";
-import runDafny from "./dafnyRun";
+import { exec } from "child_process";
+import { writeFileSync } from "fs";
 //import fs from "fs";
 //import { appendFile } from "node:fs";
-var fs = require("fs");
+// var fs = require("fs");
 var cors = require("cors");
 var bodyParser = require("body-parser");
 //const path = require("path");
@@ -28,62 +29,30 @@ app.use(bodyParser.raw({ inflate: true, type: "text/plain" }));
 //app.use(bodyParser.json());
 
 app.post("/*", (req, res) => {
-  /* We get the dafny code that was written in our code editor, verify it with dafny
-   * by calling runDafny, then send whatever dafny outputs (stored in dafnyOutput.txt)
-   * back to the front end to be displayed to the user.
-   */
-  req.body; // JavaScript object containing the parse JSON
+  const dafnyCode = req.body.toString();
 
-  //req.body; // JavaScript object containing the parse JSON
-  //console.log((req.body).toString())
-  //Get string data
-  var peopleTxt: String = req.body.toString();
-  peopleTxt = peopleTxt.slice(1, peopleTxt.length - 1);
+  const dafnyBinaryPath = "./src/dafny/dafny"; // Path to your Dafny binary
+  const projectRoot = "./"; // Root directory of your project
 
-  //Make tmp file
-  fs.appendFileSync(
-    __dirname + "/Dafny-Files" + "/dafny.dfy",
-    peopleTxt,
-    function (err: any) {
-      if (err) throw err;
-      console.log("Create!");
+  // console.log(
+  //   `${dafnyBinaryPath} verify ${__dirname}/Dafny-Files/dafnyCode.dfy`
+  // );
+
+  writeFileSync(__dirname + "/Dafny-Files/dafnyCode.dfy", dafnyCode);
+  exec(
+    `${dafnyBinaryPath} verify ${__dirname}/Dafny-Files/dafnyCode.dfy`,
+    { cwd: projectRoot },
+    (error, stdout, stderr) => {
+      if (error) {
+        console.error(`exec error: ${error}`);
+        res.status(500).send(stderr); // Send compilation error message
+        return;
+      }
+
+      // Dafny compilation succeeded, send the output back to the frontend
+      res.send(stdout);
     }
   );
-
-  //Run Dafny and store output on file
-
-  //test
-  // const data = fs.readFileSync(__dirname + "/Dafny-Files" + "/dafny.dfy", {
-  //   encoding: "utf8",
-  //   flag: "r",
-  // });
-
-  const runDaf = async () => {
-    const data = await runDafny(__dirname + "/Dafny-Files" + "/dafny.dfy");
-    return data;
-  };
-  const data = runDaf();
-  console.log(data, "this");
-  // Display the file data
-  //console.log(data);
-
-  // Delete file
-  fs.unlink(__dirname + "/Dafny-Files" + "/dafny.dfy", function (err: any) {
-    if (err && err.code == "ENOENT") {
-      // file doens't exist
-      console.info("File doesn't exist, won't remove it.");
-    } else if (err) {
-      // other errors, e.g. maybe we don't have enough permission
-      console.error("Error occurred while trying to remove file");
-    } else {
-      console.info(`removed`);
-    }
-  });
-
-  //Return Dafny Output
-  //res.send(peopleJSON);
-  console.log(data.toString());
-  res.send(data); // find proper path for file and pass that as the argument
 });
 
 app.get("/", (req, res) => {

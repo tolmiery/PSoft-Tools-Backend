@@ -2,13 +2,18 @@
  * Spawns a process to run dafny, then writes whatever dafny outputs to dafnyOutput.txt,
  * to be sent back later.
  */
+
+import { spawn } from "child_process";
 export default function runDafny(dafnyCodeFile: string) {
-  const { spawn } = require("child_process");
   var content: string = "";
   // check if dafny is installed
-  const dafnyCheck = spawn("./dafny.sh");
+  // const dafnyCheck = spawn("./dafny.sh");
 
-  const child = spawn("/dafny/dafny", ["verify", dafnyCodeFile], "utf-8");
+  const child = spawn(
+    __dirname + "/dafny/dafny",
+    ["verify", dafnyCodeFile],
+    {}
+  );
 
   // concatenating all output from the shell to content
   child.stdout.on("data", (data: string) => {
