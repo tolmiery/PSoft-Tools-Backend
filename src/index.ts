@@ -2,6 +2,7 @@
 import express, { Express, RequestHandler } from "express";
 import { exec } from "child_process";
 import { writeFileSync } from "fs";
+import dafnyParser from "./dafnyParse";
 //import fs from "fs";
 //import { appendFile } from "node:fs";
 // var fs = require("fs");
@@ -28,6 +29,7 @@ app.use(cors(corsOptions));
 app.use(bodyParser.raw({ inflate: true, type: "text/plain" }));
 //app.use(bodyParser.json());
 
+// TODO: change this from /* to whatever the main page is 
 app.post("/*", (req, res) => {
   const dafnyCode = req.body.toString();
 
@@ -54,25 +56,53 @@ app.post("/*", (req, res) => {
     }
   );
 });
+app.post("/hoare", (request, response) => {
+  // assuming request is some java code + precondition and postcondition, of the form:
+  // {Precondition as boolean formula} code {Postcondition as boolean formula}
+  const triple = request.body.toString();
+  const dafnyBinaryPath = "./src/dafny/dafny";
+  
+  // parse hoare triple into dafny
+  const dafnyCode = dafnyParser(triple);
 
-app.get("/", (req, res) => {
-  //res.send("Hello World!");
-  let responseText = JSON.stringify("Hello World!<br>");
-  res.send(responseText);
+  writeFileSync(__dirname + "/Dafny-Files/dafnyCode.dfy", dafnyCode);
+  exec(
+    `${dafnyBinaryPath} verify ${__dirname}/Dafny-Files/dafnyCode.dfy`,
+    { cwd: "./" },
+    (error, stdout, stderr) => {
+      if (error) {
+        console.error(`exec error: ${error}`);
+        response.status(500).send(stderr); // Send compilation error message
+        return;
+      }
+
+      // Dafny compilation succeeded, send the output back to the frontend
+      response.send(stdout);
+    }
+  );
 });
 
-app.get("/test", (request, response) => {
-  response.contentType("application/json");
 
-  var people = [
-    { name: "Dave", location: "Atlanta" },
-    { name: "Santa Claus", location: "North Pole" },
-    { name: "Man in the Moon", location: "The Moon" },
-  ];
+// app.get("/", (req, res) => {
+//   //res.send("Hello World!");
+//   let responseText = JSON.stringify("Hello World!<br>");
+//   res.send(responseText);
+// });
 
-  var peopleJSON = JSON.stringify(people);
-  response.send(peopleJSON);
-});
+
+// app.get("/test", (request, response) => {
+//   response.contentType("application/json");
+
+//   var people = [
+//     { name: "Dave", location: "Atlanta" },
+//     { name: "Santa Claus", location: "North Pole" },
+//     { name: "Man in the Moon", location: "The Moon" },
+//   ];
+
+//   var peopleJSON = JSON.stringify(people);
+//   response.send(peopleJSON);
+// });
+
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
