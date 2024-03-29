@@ -1,7 +1,7 @@
 // src/index.js
 import express, { Express, RequestHandler } from "express";
 import { exec } from "child_process";
-import { writeFileSync } from "fs";
+import { unlinkSync, writeFileSync } from "fs";
 //import fs from "fs";
 //import { appendFile } from "node:fs";
 // var fs = require("fs");
@@ -57,6 +57,7 @@ app.post("/*", (req, res) => {
 
       // Dafny compilation succeeded, send the output back to the frontend
       res.send(stdout);
+      unlinkSync(__dirname + "/Dafny-Files/dafnyCode.dfy");
     }
   );
 });
