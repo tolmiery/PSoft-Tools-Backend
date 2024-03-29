@@ -29,24 +29,30 @@ app.use(bodyParser.raw({ inflate: true, type: "text/plain" }));
 //app.use(bodyParser.json());
 
 app.post("/*", (req, res) => {
-  const dafnyCode = req.body.toString();
+  const dafnyCode: string = req.body.toString();
 
-  const dafnyBinaryPath = "./src/dafny/dafny"; // Path to your Dafny binary
+  const dafnyBinaryPath = __dirname + "/dafny/dafny"; // Path to your Dafny binary
   const projectRoot = "./"; // Root directory of your project
 
   // console.log(
   //   `${dafnyBinaryPath} verify ${__dirname}/Dafny-Files/dafnyCode.dfy`
   // );
 
-  writeFileSync(__dirname + "/Dafny-Files/dafnyCode.dfy", dafnyCode);
+  writeFileSync(
+    __dirname + "/Dafny-Files/dafnyCode.dfy",
+    dafnyCode.replace(/\r\n/g, "\n")
+  );
+  console.log(
+    `${dafnyBinaryPath} verify ${__dirname}/Dafny-Files/dafnyCode.dfy`
+  );
   exec(
     `${dafnyBinaryPath} verify ${__dirname}/Dafny-Files/dafnyCode.dfy`,
     { cwd: projectRoot },
     (error, stdout, stderr) => {
       if (error) {
-        console.error(`exec error: ${error}`);
-        res.status(500).send(stderr); // Send compilation error message
-        return;
+        console.error(
+          `compile error: ${error} stdout: ${stdout} stderr: ${stderr}`
+        );
       }
 
       // Dafny compilation succeeded, send the output back to the frontend
