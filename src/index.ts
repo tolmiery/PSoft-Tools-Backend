@@ -1,13 +1,9 @@
 // src/index.js
 import express, { Express, RequestHandler } from "express";
-import { exec } from "child_process";
-import { unlinkSync, writeFileSync } from "fs";
-//import fs from "fs";
-//import { appendFile } from "node:fs";
-// var fs = require("fs");
+import runDafny from "./runDafny";
+
 var cors = require("cors");
 var bodyParser = require("body-parser");
-//const path = require("path");
 
 const app: Express = express();
 const port = 3000;
@@ -30,36 +26,9 @@ app.use(bodyParser.raw({ inflate: true, type: "text/plain" }));
 
 app.post("/*", (req, res) => {
   const dafnyCode: string = req.body.toString();
-
-  const dafnyBinaryPath = __dirname + "/dafny/dafny"; // Path to your Dafny binary
-  const projectRoot = "./"; // Root directory of your project
-
-  // console.log(
-  //   `${dafnyBinaryPath} verify ${__dirname}/Dafny-Files/dafnyCode.dfy`
-  // );
-
-  writeFileSync(
-    __dirname + "/Dafny-Files/dafnyCode.dfy",
-    dafnyCode.replace(/\r\n/g, "\n")
-  );
-  console.log(
-    `${dafnyBinaryPath} verify ${__dirname}/Dafny-Files/dafnyCode.dfy`
-  );
-  exec(
-    `${dafnyBinaryPath} verify ${__dirname}/Dafny-Files/dafnyCode.dfy`,
-    { cwd: projectRoot },
-    (error, stdout, stderr) => {
-      if (error) {
-        console.error(
-          `compile error: ${error} stdout: ${stdout} stderr: ${stderr}`
-        );
-      }
-
-      // Dafny compilation succeeded, send the output back to the frontend
-      res.send(stdout);
-      unlinkSync(__dirname + "/Dafny-Files/dafnyCode.dfy");
-    }
-  );
+  runDafny(dafnyCode).then((result) => {
+    res.send(result);
+  });
 });
 
 app.get("/", (req, res) => {
