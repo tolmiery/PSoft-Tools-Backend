@@ -135,4 +135,3 @@ dist
 #Dafny Binary
 src/dafny/*
 src/Dafny-Files/** 
-/src/Dafny-Files
