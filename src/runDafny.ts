@@ -1,6 +1,6 @@
 import { exec } from "child_process";
 import { writeFileSync } from "fs";
-export default async function runDafny(dafnyCode: string): Promise<string> {
+export async function verifyDafny(dafnyCode: string): Promise<string> {
   const dafnyBinaryPath = __dirname + "/dafny/dafny"; // Path to your Dafny binary
   const dafnyFilePath = __dirname + "/Dafny-Files/dafnyCode.dfy"; // Path to the Dafny file to be compiled
   const projectRoot = "./"; // Root directory of your project

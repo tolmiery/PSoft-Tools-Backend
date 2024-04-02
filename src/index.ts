@@ -1,6 +1,6 @@
 // src/index.js
 import express, { Express, RequestHandler } from "express";
-import runDafny from "./runDafny";
+import { verifyDafny } from "./runDafny";
 
 var cors = require("cors");
 var bodyParser = require("body-parser");
@@ -26,7 +26,7 @@ app.use(bodyParser.raw({ inflate: true, type: "text/plain" }));
 
 app.post("/*", (req, res) => {
   const dafnyCode: string = req.body.toString();
-  runDafny(dafnyCode).then((result) => {
+  verifyDafny(dafnyCode).then((result) => {
     res.send(result);
   });
 });
