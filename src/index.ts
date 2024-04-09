@@ -26,16 +26,17 @@ app.use(cors(corsOptions));
 app.use(bodyParser.raw({ inflate: true, type: "text/plain" }));
 //app.use(bodyParser.json());
 
-// TODO: change this from /* to whatever the main page is 
-app.post("/*", (req, res) => {
+app.post("/verify", (req, res) => {
   const dafnyCode: string = req.body.toString();
   verifyDafny(dafnyCode).then((result) => {
-    const verifyResult = result;
-    runDafny(dafnyCode).then((result2) => {
+    res.send(result);
+  });
+});
 
-      res.send({verify: verifyResult, output: result2});
-    });
-
+app.post("/run", (req, res) => {
+  const dafnyCode: string = req.body.toString();
+  runDafny(dafnyCode).then((result) => {
+    res.send(result);
   });
 });
 app.post("/hoare", (request, response) => {
