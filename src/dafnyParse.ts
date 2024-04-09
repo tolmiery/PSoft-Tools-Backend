@@ -46,9 +46,16 @@ export default function dafnyParser(triple: String){
             methodHeader +="_method";
         }
     }
-    methodHeader += "{";
+    methodHeader += "{\n";
 
-
+    // add in statements
     const statements = triple[1].split("\r\n");
+    let methodBody = "";
+    for(var statement of statements){
+        methodBody += statement + '\n';
+    }
+    methodBody += "}";
+
+    resultCode = methodHeader + methodBody;
     return resultCode;
 }
