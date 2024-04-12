@@ -1,7 +1,6 @@
 // src/index.js
 import express, { Express, RequestHandler } from "express";
 import { verifyDafny, runDafny } from "./runDafny";
-import dafnyParser from "./dafnyParse";
 import { writeFileSync } from "fs";
 import {exec} from "child_process";
 import { Console } from "console";
@@ -41,29 +40,10 @@ app.post("/run", (req, res) => {
 app.post("/hoare", (request, response) => {
   // assuming request is some java code + precondition and postcondition, of the form:
   // {Precondition as boolean formula} code {Postcondition as boolean formula}
-  const triple = request.body.toString();
-  console.log(triple)
-  const dafnyBinaryPath = "./src/dafny/dafny";
-  
-  // parse hoare triple into dafny
-  const dafnyCode = dafnyParser(triple);
-  console.log(dafnyCode);
-
-  // writeFileSync(__dirname + "/Dafny-Files/dafnyCode.dfy", dafnyCode);
-  // exec(
-  //   `${dafnyBinaryPath} verify ${__dirname}/Dafny-Files/dafnyCode.dfy`,
-  //   { cwd: "./" },
-  //   (error, stdout, stderr) => {
-  //     if (error) {
-  //       console.error(`exec error: ${error}`);
-  //       response.status(500).send(stderr); // Send compilation error message
-  //       return;
-  //     }
-
-  //     // Dafny compilation succeeded, send the output back to the frontend
-  //     response.send(stdout);
-  //   }
-  // );
+  const dafnyCode:string = request.body.toString();
+  verifyDafny(dafnyCode).then((result) => {
+    response.send(result);
+  });
 });
 
 
