@@ -46,12 +46,26 @@ app.post("/hoare", (request, response) => {
   });
 });
 
+app.post("/forward-reasoning", (request, response) => {
+  const dafnyCode:string = request.body.toString();
+  verifyDafny(dafnyCode).then((result) => {
+    response.send(result);
+  });
+});
 
-// app.get("/", (req, res) => {
-//   //res.send("Hello World!");
-//   let responseText = JSON.stringify("Hello World!<br>");
-//   res.send(responseText);
-// });
+app.post("/backward-reasoning", (request, response) => {
+  const dafnyCode:string = request.body.toString();
+  verifyDafny(dafnyCode).then((result) => {
+    response.send(result);
+  });
+});
+
+
+app.get("/", (req, res) => {
+  //res.send("Hello World!");
+  let responseText = JSON.stringify("Hello World!<br>");
+  res.send(responseText);
+});
 
 
 // app.get("/test", (request, response) => {
