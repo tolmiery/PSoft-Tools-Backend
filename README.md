@@ -12,7 +12,7 @@ Provides a tool that generates a control-flow graph from given Java code.
 #### Node.js
 1. Install the latest version of npm: https://docs.npmjs.com/downloading-and-installing-node-js-and-npm
 2. Install the dependencies: `npm install`
-3. Set up the frontend server: https://github.com/aandrepingu/PSoft-Tools
+3. Set up the frontend server: https://github.com/tolmiery/PSoft-Tools
 #### Dafny
 This application requires .NET SDK 6.0 and Dafny in order to run. We recommend using the provided script `./src/dafnySetup.sh` to automatically install required components; however, these are the steps to manually do so:
 1. Install .NET SDK 6.0: `sudo apt install dotnet-sdk-6.0`
@@ -26,6 +26,14 @@ This application requires .NET SDK 6.0 and Dafny in order to run. We recommend u
 
 ### Running
 1. Run the dev server: `npm run dev`
-2. Run the frontend dev server: 
+2. Run the frontend dev server in a separate terminal: 
     - `cd /path/to/PSoft-Tools/psoft-tools`
     - `npm run dev`
+### Troubleshooting
+* **EACESS ERROR:** This may occur when trying to install npm after already having a previous installation. The error can be resolved by uninstalling npm and node completely using the commands `sudo apt-get remove nodejs` and `sudo apt-get remove npm` followed by reinstallation. If the error persists after reinstallation, your version(s) of node and/or npm may be out of date. NOTE: **avoid installing using `sudo` for installation**, as this often causes EACESS error.
+*  **OUTDATED NODE/NPM:** in some cases, the usual installation methods linked above may result in an out of date installation. The project is compatible with the most recent versions of node/npm, which are currently `npm 10.9.2` and `node v22.13.1`. Your current versions can be checked using the command `npm version`. If they are out of date, uninstall and reinstall using the appropriate commands for your OS linked here: https://nodejs.org/en/download/. This should resolve errors with vite and EACESS errors.
+## Contributors (Spring 2024)
+Project Lead: Cal Hiffa (tolmiery)  
+Member: Nathaniel Viana (NDViana)  
+Member: Kevin Lukash (kevinlukash)  
+Member: Tyler Hunt (thuntxiv)
