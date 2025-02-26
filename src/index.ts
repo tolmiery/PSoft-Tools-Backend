@@ -60,6 +60,26 @@ app.post("/backward-reasoning", (request, response) => {
   });
 });
 
+app.post("/gentriple", (req, res) => {
+  const inputData: string = req.body.toString(); // Get the body from the request
+
+  // Run the Python script with the input data passed as an argument
+  exec(`python3 HoareTripleGrammar.py "${inputData}"`, (err, stdout, stderr) => {
+    if (err) {
+      console.error("Error executing Python script:", err);
+      return res.status(500).send("Error executing Python script");
+    }
+
+    if (stderr) {
+      console.error("Python script stderr:", stderr);
+      return res.status(500).send("Error in Python script");
+    }
+
+    // Send back the output from the Python script (stdout)
+    res.send(stdout);
+  });
+});
+
 
 app.get("/", (req, res) => {
   //res.send("Hello World!");
