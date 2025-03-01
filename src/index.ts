@@ -4,6 +4,7 @@ import { verifyDafny, runDafny } from "./runDafny";
 import { writeFileSync } from "fs";
 import {exec} from "child_process";
 import { Console } from "console";
+import path from 'path';
 var cors = require("cors");
 var bodyParser = require("body-parser");
 
@@ -60,23 +61,20 @@ app.post("/backward-reasoning", (request, response) => {
   });
 });
 
-app.post("/gentriple", (req, res) => {
-  const inputData: string = req.body.toString(); // Get the body from the request
-
-  // Run the Python script with the input data passed as an argument
-  exec(`python3 HoareTripleGrammar.py "${inputData}"`, (err, stdout, stderr) => {
-    if (err) {
-      console.error("Error executing Python script:", err);
-      return res.status(500).send("Error executing Python script");
-    }
-
-    if (stderr) {
-      console.error("Python script stderr:", stderr);
-      return res.status(500).send("Error in Python script");
-    }
-
-    // Send back the output from the Python script (stdout)
-    res.send(stdout);
+app.post("/gentriple", (request, result) => {
+  const scriptPath = path.resolve(__dirname, '../../PSoft-Tools/psoft-tools/src/lib/HoareTripleGrammar.py');
+  
+  exec(`python3 ${scriptPath}`, (err: Error | null, stdout: string, stderr: string) => {
+      if (err) {
+          console.error("Execution Error:", err);
+          return result.status(500).send(`Execution Error:\n${err.message}`);
+      }
+      if (stderr) {
+          console.error("Python stderr:", stderr);
+          return result.status(500).send(`Python Error:\n${stderr}`);
+      }
+      console.log("Python script output:", stdout);
+      result.send(stdout);
   });
 });
 
