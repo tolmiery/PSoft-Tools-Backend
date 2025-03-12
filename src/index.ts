@@ -62,9 +62,41 @@ app.post("/backward-reasoning", (request, response) => {
 });
 
 app.post("/gentriple", (request, result) => {
-  const scriptPath = path.resolve(__dirname, '../../PSoft-Tools/psoft-tools/src/lib/HoareTripleGrammar.py');
-  
-  exec(`python3 ${scriptPath}`, (err: Error | null, stdout: string, stderr: string) => {
+  const scriptPath = path.resolve(__dirname, '../../PSoft-Tools/psoft-tools/src/lib');
+  exec(`cd '${scriptPath}' && python3 HoareTripleGrammar.py 1`, (err: Error | null, stdout: string, stderr: string) => {
+      if (err) {
+          console.error("Execution Error:", err);
+          return result.status(500).send(`Execution Error:\n${err.message}`);
+      }
+      if (stderr) {
+          console.error("Python stderr:", stderr);
+          return result.status(500).send(`Python Error:\n${stderr}`);
+      }
+      console.log("Python script output:", stdout);
+      result.send(stdout);
+  });
+});
+
+
+app.post("/forwardsgen", (request, result) => {
+  const scriptPath = path.resolve(__dirname, '../../PSoft-Tools/psoft-tools/src/lib');
+  exec(`cd '${scriptPath}' && python3 HoareTripleGrammar.py 2`, (err: Error | null, stdout: string, stderr: string) => {
+      if (err) {
+          console.error("Execution Error:", err);
+          return result.status(500).send(`Execution Error:\n${err.message}`);
+      }
+      if (stderr) {
+          console.error("Python stderr:", stderr);
+          return result.status(500).send(`Python Error:\n${stderr}`);
+      }
+      console.log("Python script output:", stdout);
+      result.send(stdout);
+  });
+});
+
+app.post("/backwardsgen", (request, result) => {
+  const scriptPath = path.resolve(__dirname, '../../PSoft-Tools/psoft-tools/src/lib');
+  exec(`cd '${scriptPath}' && python3 HoareTripleGrammar.py 3`, (err: Error | null, stdout: string, stderr: string) => {
       if (err) {
           console.error("Execution Error:", err);
           return result.status(500).send(`Execution Error:\n${err.message}`);
