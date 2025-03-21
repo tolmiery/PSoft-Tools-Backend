@@ -61,10 +61,9 @@ app.post("/backward-reasoning", (request, response) => {
   });
 });
 
-app.post("/gentriple", (request, result) => {
-  const scriptPath = path.resolve(__dirname, '../../PSoft-Tools/psoft-tools/src/lib/HoareTripleGrammar.py');
-  
-  exec(`python3 ${scriptPath}`, (err: Error | null, stdout: string, stderr: string) => {
+const runPythonScript = (type: string, result: any) => {
+  const scriptPath = path.resolve(__dirname, '../../PSoft-Tools/psoft-tools/src/lib');
+  exec(`cd '${scriptPath}' && python3 HoareTripleGrammar.py ${type}`, (err: Error | null, stdout: string, stderr: string) => {
       if (err) {
           console.error("Execution Error:", err);
           return result.status(500).send(`Execution Error:\n${err.message}`);
@@ -76,6 +75,18 @@ app.post("/gentriple", (request, result) => {
       console.log("Python script output:", stdout);
       result.send(stdout);
   });
+};
+
+app.post("/gentriple", (request, result) => {
+  runPythonScript("1", result);
+});
+
+app.post("/forwardsgen", (request, result) => {
+  runPythonScript("2", result);
+});
+
+app.post("/backwardsgen", (request, result) => {
+  runPythonScript("3", result);
 });
 
 
