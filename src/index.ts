@@ -79,25 +79,6 @@ app.post("/gentriple", (request, result) => {
 });
 
 
-app.get("/", (req, res) => {
-  //res.send("Hello World!");
-  let responseText = JSON.stringify("Hello World!<br>");
-  res.send(responseText);
-});
-
-
-// app.get("/test", (request, response) => {
-//   response.contentType("application/json");
-
-//   var people = [
-//     { name: "Dave", location: "Atlanta" },
-//     { name: "Santa Claus", location: "North Pole" },
-//     { name: "Man in the Moon", location: "The Moon" },
-//   ];
-
-//   var peopleJSON = JSON.stringify(people);
-//   response.send(peopleJSON);
-// });
 
 
 app.listen(port, () => {
