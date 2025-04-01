@@ -1,5 +1,7 @@
 import { exec } from "child_process";
 import { writeFileSync } from "fs";
+
+// Verifies the code written works with Dafny
 export async function verifyDafny(dafnyCode: string): Promise<string> {
   const dafnyBinaryPath = __dirname.replaceAll(' ', '\\ ') + "/dafny/dafny"; // Path to your Dafny binary
   const dafnyFilePath = __dirname.replaceAll(' ', '\\ ') + "/Dafny-Files/dafnyCode.dfy"; // Path to the Dafny file to be compiled
@@ -25,6 +27,7 @@ export async function verifyDafny(dafnyCode: string): Promise<string> {
   });
 }
 
+//Same Function as verifyDafny needs to be removed
 export async function runDafny(dafnyCode: string): Promise<string> {
   
   const dafnyBinaryPath = __dirname.replaceAll(' ', '\\ ') + "/dafny/dafny"; // Path to your Dafny binary
@@ -35,6 +38,7 @@ export async function runDafny(dafnyCode: string): Promise<string> {
 
   const projectRoot = "./"; // Root directory of your project
 
+  // Runs the Dafny code and returns any errors or outputs
   writeFileSync(
     __dirname + "/Dafny-Files/dafnyCode.dfy",
     dafnyCode.replace(/\r\n/g, "\n")

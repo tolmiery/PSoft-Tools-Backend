@@ -21,10 +21,11 @@ var corsOptions = {
 };
 
 app.use(logRequest);
-//app.use(express.json());
+
 app.use(cors(corsOptions));
 app.use(bodyParser.raw({ inflate: true, type: "text/plain" }));
 
+// Posts the verify command with the dafnyCode given
 app.post("/verify", (req, res) => {
   const dafnyCode: string = req.body.toString();
   verifyDafny(dafnyCode).then((result) => {
@@ -32,12 +33,14 @@ app.post("/verify", (req, res) => {
   });
 });
 
+// Posts the run command with the dafnyCode given
 app.post("/run", (req, res) => {
   const dafnyCode: string = req.body.toString();
   runDafny(dafnyCode).then((result) => {
     res.send(result);
   });
 });
+// Posts the hoare command for the hoare triple
 app.post("/hoare", (request, response) => {
   // assuming request is some java code + precondition and postcondition, of the form:
   // {Precondition as boolean formula} code {Postcondition as boolean formula}
@@ -47,6 +50,7 @@ app.post("/hoare", (request, response) => {
   });
 });
 
+//Posts forward reasoning using the verifyDafny command
 app.post("/forward-reasoning", (request, response) => {
   const dafnyCode:string = request.body.toString();
   verifyDafny(dafnyCode).then((result) => {
@@ -54,6 +58,7 @@ app.post("/forward-reasoning", (request, response) => {
   });
 });
 
+//Posts backward reasoning using the verifyDafny command
 app.post("/backward-reasoning", (request, response) => {
   const dafnyCode:string = request.body.toString();
   verifyDafny(dafnyCode).then((result) => {
@@ -61,6 +66,7 @@ app.post("/backward-reasoning", (request, response) => {
   });
 });
 
+//Runs the Python script for the HoareTriple problem generator
 const runPythonScript = (type: string, result: any) => {
   const scriptPath = path.resolve(__dirname, '../../PSoft-Tools/psoft-tools/src/lib');
   exec(`cd '${scriptPath}' && python3 HoareTripleGrammar.py ${type}`, (err: Error | null, stdout: string, stderr: string) => {
@@ -77,14 +83,17 @@ const runPythonScript = (type: string, result: any) => {
   });
 };
 
+// Calls runPythonScript when the generate triple button is pressed
 app.post("/gentriple", (request, result) => {
   runPythonScript("1", result);
 });
 
+// Calls runPythonScript to generate a portion of a hoare triple for a forward gen problem
 app.post("/forwardsgen", (request, result) => {
   runPythonScript("2", result);
 });
 
+// Calls runPythonScript to generate a portion of a hoare triple for a backwards gen problem
 app.post("/backwardsgen", (request, result) => {
   runPythonScript("3", result);
 });
