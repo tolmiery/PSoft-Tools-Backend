@@ -1,6 +1,6 @@
 // src/index.js
 import express, { Express, RequestHandler } from "express";
-import { verifyDafny, runDafny } from "./runDafny";
+import { verifyDafny } from "./runDafny";
 import { writeFileSync } from "fs";
 import {exec} from "child_process";
 import { Console } from "console";
@@ -33,13 +33,6 @@ app.post("/verify", (req, res) => {
   });
 });
 
-// Posts the run command with the dafnyCode given
-app.post("/run", (req, res) => {
-  const dafnyCode: string = req.body.toString();
-  runDafny(dafnyCode).then((result) => {
-    res.send(result);
-  });
-});
 // Posts the hoare command for the hoare triple
 app.post("/hoare", (request, response) => {
   // assuming request is some java code + precondition and postcondition, of the form:
@@ -100,7 +93,7 @@ app.post("/backwardsgen", (request, result) => {
 
 
 
-
+// Basic Message to show app is listening
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
 });
