@@ -7,13 +7,14 @@ export async function verifyDafny(dafnyCode: string): Promise<string> {
   const dafnyFilePath = __dirname.replaceAll(' ', '\\ ') + "/Dafny-Files/dafnyCode.dfy"; // Path to the Dafny file to be compiled
   const projectRoot = "./"; // Root directory of your project
 
+  // formats dafny code and runs dafny
   writeFileSync(
     __dirname + "/Dafny-Files/dafnyCode.dfy",
     dafnyCode.replace(/\r\n/g, "\n")
   );
   return new Promise<string>((resolve, reject) => {
     exec(
-      `${dafnyBinaryPath} verify ${dafnyFilePath}`,
+      `${dafnyBinaryPath} verify ${dafnyFilePath}`, //verifies using dafny
       { cwd: projectRoot },
       (error, stdout, stderr) => {
         if (error) {

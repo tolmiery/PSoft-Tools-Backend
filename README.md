@@ -32,6 +32,7 @@ This application requires .NET SDK 6.0 and Dafny in order to run. We recommend u
 ### Troubleshooting
 * **EACESS ERROR:** This may occur when trying to install npm after already having a previous installation. The error can be resolved by uninstalling npm and node completely using the commands `sudo apt-get remove nodejs` and `sudo apt-get remove npm` followed by reinstallation. If the error persists after reinstallation, your version(s) of node and/or npm may be out of date. NOTE: **avoid installing using `sudo` for installation**, as this often causes EACESS error.
 *  **OUTDATED NODE/NPM:** in some cases, the usual installation methods linked above may result in an out of date installation. The project is compatible with the most recent versions of node/npm, which are currently `npm 10.9.2` and `node v22.13.1`. Your current versions can be checked using the command `npm version`. If they are out of date, uninstall and reinstall using the appropriate commands for your OS linked here: https://nodejs.org/en/download/. This should resolve errors with vite and EACESS errors.
+* **AVOID USING ONEDRIVE:** Using OneDrive can cause errors where the backend isn't able to communicate with the frontend. This cause errors such as CANNOT POST.
 ## Contributors (Spring 2024)
 Project Lead: Cal Hiffa (tolmiery)  
 Member: Nathaniel Viana (NDViana)  
